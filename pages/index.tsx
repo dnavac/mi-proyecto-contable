@@ -43,6 +43,11 @@ export default function Home() {
           >
             Cerrar sesión
           </button>
+            <div className="my-4">
+              <a href="/movements" className="text-blue-600 underline text-lg font-semibold">
+                Ir a Gestión de Ingresos y Gastos →
+              </a>
+            </div>
         </div>
       )}
     </div>
