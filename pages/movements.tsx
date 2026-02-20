@@ -37,7 +37,7 @@ export default function MovementsPage() {
     }
     setLoading(false);
   };
-  
+
   //Guardar un nuevo movimiento (Solo si eres ADMIN)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -86,7 +86,7 @@ export default function MovementsPage() {
                 <input
                   type="text"
                   placeholder="Ej. Venta de software"
-                  className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+                  className="mt-1 block w-full border border-gray-300 rounded-md p-2 text-gray-900"
                   value={formData.concept}
                   onChange={(e) => setFormData({ ...formData, concept: e.target.value })}
                 />
@@ -96,7 +96,7 @@ export default function MovementsPage() {
                 <input
                   type="number"
                   placeholder="0.00"
-                  className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+                  className="mt-1 block w-full border border-gray-300 rounded-md p-2 text-gray-900"
                   value={formData.amount}
                   onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
                 />
@@ -104,7 +104,7 @@ export default function MovementsPage() {
               <div>
                 <label className="block text-sm font-medium text-gray-700">Tipo</label>
                 <select
-                  className="mt-1 block w-full border border-gray-300 rounded-md p-2 bg-white"
+                  className="mt-1 block w-full border border-gray-300 rounded-md p-2 bg-white text-gray-900"
                   value={formData.type}
                   onChange={(e) => setFormData({ ...formData, type: e.target.value })}
                 >
@@ -127,37 +127,37 @@ export default function MovementsPage() {
         )}
 
         {/* Tabla de Resultados */}
-        <div className="bg-white rounded-lg shadow overflow-hidden border border-gray-200">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-100">
+        <div className="bg-white rounded-lg shadow overflow-hidden border border-gray-300">
+          <table className="min-w-full divide-y divide-gray-300">
+            <thead className="bg-gray-200">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Concepto</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Usuario</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Monto</th>
+                <th className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider">Fecha</th>
+                <th className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider">Concepto</th>
+                <th className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider">Usuario</th>
+                <th className="px-6 py-3 text-right text-xs font-bold text-gray-800 uppercase tracking-wider">Monto</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {movements.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="px-6 py-4 text-center text-gray-500">
+                  <td colSpan={4} className="px-6 py-6 text-center text-gray-700 font-medium text-lg">
                     No hay movimientos registrados aún.
                   </td>
                 </tr>
               ) : (
                 movements.map((mov) => (
-                  <tr key={mov.id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <tr key={mov.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-700">
                       {new Date(mov.date).toLocaleDateString()}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">
                       {mov.concept}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-700">
                       {mov.user?.name || "Desconocido"}
                     </td>
-                    <td className={`px-6 py-4 whitespace-nowrap text-sm text-right font-bold ${
-                      mov.type === "INCOME" ? "text-green-600" : "text-red-600"
+                    <td className={`px-6 py-4 whitespace-nowrap text-sm text-right font-black ${
+                      mov.type === "INCOME" ? "text-green-700" : "text-red-700"
                     }`}>
                       {mov.type === "INCOME" ? "+" : "-"} ${mov.amount}
                     </td>
