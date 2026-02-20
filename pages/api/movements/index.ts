@@ -38,12 +38,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       if (!concept || !amount || !type) {
         return res.status(400).json({ error: "Faltan datos obligatorios (concept, amount, type)" });
       }
+      
+      const numericAmount = parseFloat(amount);
 
+      if (isNaN(numericAmount) || numericAmount <= 0) {
+        return res.status(400).json({ error: "El monto debe ser un número válido mayor a cero" });
+      }
       // Guardar en la base de datos
       const newMovement = await prisma.movement.create({
         data: {
           concept,
-          amount: parseFloat(amount),
+          amount: numericAmount,
           type,
           userId: session.user.id, // Se vincula automáticamente al usuario logueado
         },

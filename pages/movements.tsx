@@ -43,11 +43,17 @@ export default function MovementsPage() {
     e.preventDefault();
     if (!formData.amount || !formData.concept) return;
 
+    const cleanAmount = formData.amount.replace(/\./g, ""); // Eliminar puntos
+
     try {
       const res = await fetch("/api/movements", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+            concept: formData.concept,
+            type: formData.type,
+            amount: cleanAmount, // Enviamos el monto limpio sin puntos
+         }),
       });
 
       if (res.ok) {
@@ -94,11 +100,31 @@ export default function MovementsPage() {
               <div>
                 <label className="block text-sm font-medium text-gray-700">Monto</label>
                 <input
-                  type="number"
+                  type="text"
                   placeholder="0.00"
                   className="mt-1 block w-full border border-gray-300 rounded-md p-2 text-gray-900"
                   value={formData.amount}
-                  onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/[^0-9]/g, "");
+                    setFormData({ ...formData, amount: val });
+                  }}
+                  onBlur={() => {
+                    // CUANDO TE SALES (BLUR): Formateamos con puntos (10000 -> 10.000)
+                    if (formData.amount) {
+                      const val = Number(formData.amount.replace(/\./g, ""));
+                      setFormData({
+                        ...formData,
+                        amount: val.toLocaleString("es-CO"),
+                      });
+                    }
+                  }}
+                  onFocus={() => {
+                    // CUANDO ENTRAS (FOCUS): Quitamos los puntos para editar fácil (10.000 -> 10000)
+                    if (formData.amount) {
+                      const val = formData.amount.replace(/\./g, "");
+                      setFormData({ ...formData, amount: val });
+                    }
+                    }} 
                 />
               </div>
               <div>
@@ -159,7 +185,7 @@ export default function MovementsPage() {
                     <td className={`px-6 py-4 whitespace-nowrap text-sm text-right font-black ${
                       mov.type === "INCOME" ? "text-green-700" : "text-red-700"
                     }`}>
-                      {mov.type === "INCOME" ? "+" : "-"} ${mov.amount}
+                      {mov.type === "INCOME" ? "+" : "-"} ${mov.amount.toLocaleString('es-CO')}
                     </td>
                   </tr>
                 ))
