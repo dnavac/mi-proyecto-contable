@@ -53,6 +53,11 @@ export default function Home() {
                 Ir a Gestión de Usuarios →
               </a>
             </div>
+            <div className="my-2">
+              <a href="/reports" className="text-blue-600 underline text-lg font-semibold">
+                Ir a Reportes Financieros →
+              </a>
+            </div>
         </div>
       )}
     </div>
