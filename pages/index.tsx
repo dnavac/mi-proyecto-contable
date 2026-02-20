@@ -48,6 +48,11 @@ export default function Home() {
                 Ir a Gestión de Ingresos y Gastos →
               </a>
             </div>
+            <div className="my-2">
+              <a href="/users" className="text-blue-600 underline text-lg font-semibold">
+                Ir a Gestión de Usuarios →
+              </a>
+            </div>
         </div>
       )}
     </div>
