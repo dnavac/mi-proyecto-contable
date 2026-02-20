@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
+import {toast} from "sonner";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 // Definimos qué forma tiene un  Movimiento para tener tipado en el frontend
 interface Movement {
@@ -41,7 +44,10 @@ export default function MovementsPage() {
   //Guardar un nuevo movimiento (Solo si eres ADMIN)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.amount || !formData.concept) return;
+    if (!formData.amount || !formData.concept) {
+      toast.warning("Por favor completa todos los campos");
+      return;
+    }
 
     const cleanAmount = formData.amount.replace(/\./g, ""); // Eliminar puntos
 
@@ -59,13 +65,13 @@ export default function MovementsPage() {
       if (res.ok) {
         setFormData({ concept: "", amount: "", type: "INCOME" }); // Limpiar form
         fetchMovements(); //Recargar tabla
-        alert("¡Movimiento guardado!");
+        toast.success("Movimiento guardado con éxito");
       } else {
         const error = await res.json();
-        alert("Error: " + error.error);
+        toast.error("Error: " + error.error);
       }
     } catch (err) {
-      alert("Error de conexión");
+      toast.error("Error de conexión");
     }
   };
 

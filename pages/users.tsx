@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
+import {toast} from "sonner";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 interface User {
   id: string;
@@ -42,11 +45,11 @@ export default function UsersPage() {
     });
 
     if (res.ok) {
-      alert("Rol actualizado correctamente");
+      toast.success("Rol actualizado correctamente");
       setEditingUserId(null);
       fetchUsers();
     } else {
-      alert("Error al actualizar el rol");
+      toast.error("Error al actualizar el rol");
     }
   };
 
