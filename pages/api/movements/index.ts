@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../../lib/prisma";
 import { auth } from "../../../lib/auth";
+import { date } from "better-auth";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   //Verificar que el usuario haya iniciado sesión
@@ -26,16 +27,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   // Crear un nuevo movimiento
   if (req.method === "POST") {
-    // Regla: Solo los ADMIN pueden crear movimientos
+    //Se valida que solo los ADMIN pueden crear movimientos
     if (session.user.role !== "ADMIN") {
       return res.status(403).json({ error: "Acceso denegado. Solo los administradores pueden crear movimientos." });
     }
 
     try {
-      const { concept, amount, type } = req.body;
+      const { concept, amount, type, date } = req.body;
 
       // Validar que manden los datos correctos
-      if (!concept || !amount || !type) {
+      if (!concept || !amount || !type || !date) {
         return res.status(400).json({ error: "Faltan datos obligatorios (concept, amount, type)" });
       }
       
@@ -50,6 +51,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           concept,
           amount: numericAmount,
           type,
+          date: new Date(date),
           userId: session.user.id, // Se vincula automáticamente al usuario logueado
         },
       });

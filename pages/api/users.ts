@@ -25,15 +25,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // Actualizar el rol de un usuario
   if (req.method === "PUT") {
     try {
-      const { userId, newRole } = req.body;
+      const { userId, newRole,newName } = req.body;
 
-      if (!userId || !newRole) {
+      if (!userId || !newRole|| !newName) {
         return res.status(400).json({ error: "Faltan datos obligatorios (userId, newRole)" });
       }
 
       const updatedUser = await prisma.user.update({
         where: { id: userId },
-        data: { role: newRole }
+        data: { role: newRole, name: newName },
       });
 
       return res.status(200).json(updatedUser);
