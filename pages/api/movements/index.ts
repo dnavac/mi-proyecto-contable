@@ -56,7 +56,7 @@ import { date } from "better-auth";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   //Verificar que el usuario haya iniciado sesión
-  const session = await auth.api.getSession({ headers: req.headers });
+  const session = await auth.api.getSession({ headers: req.headers as HeadersInit});
   console.log("Sesión actual:", session);
   
   if (!session) {
