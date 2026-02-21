@@ -82,9 +82,6 @@ export default function ReportsPage() {
         {/* Encabezado */}
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800">📊 Reportes Financieros</h1>
-          <Link href="/" className="text-blue-600 hover:underline font-semibold">
-            ← Volver al Inicio
-          </Link>
         </div>
 
         {/* Tarjetas de Resumen */}
