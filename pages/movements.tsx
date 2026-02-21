@@ -92,7 +92,7 @@ export default function MovementsPage() {
         <h1 className="text-2xl font-bold text-slate-800">💰 Ingresos y Egresos</h1>
         
         {/* El botón solo aparece si es ADMIN y el formulario NO está abierto */}
-        {session?.user.role === "ADMIN" && !isFormOpen && (
+        {(session?.user as { role?: string })?.role === "ADMIN" && !isFormOpen && (
           <Button onClick={() => setIsFormOpen(true)} className="bg-slate-900 hover:bg-slate-800">
             + Nuevo Movimiento
           </Button>
@@ -100,7 +100,7 @@ export default function MovementsPage() {
       </div>
 
       {/* Formulario Desplegable (Solo visible si isFormOpen es true) */}
-      {session?.user.role === "ADMIN" && isFormOpen && (
+      {(session?.user as { role?: string })?.role === "ADMIN" && isFormOpen && (
         <div className="bg-white p-6 rounded-xl shadow-sm mb-8 border border-slate-200 animate-in fade-in slide-in-from-top-4 duration-300">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-lg font-semibold text-slate-800">Registrar Operación</h2>

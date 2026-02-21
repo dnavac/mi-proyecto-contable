@@ -18,7 +18,7 @@ export default function ReportsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (session?.user.role === "ADMIN") {
+    if ((session?.user as { role?: string })?.role === "ADMIN") {
       fetchMovements();
     }
   }, [session]);
@@ -64,7 +64,7 @@ export default function ReportsPage() {
 
   if (isPending || loading) return <div className="p-10 font-sans text-lg">Generando reportes...</div>;
 
-  if (session?.user.role !== "ADMIN") {
+  if ((session?.user as { role?: string })?.role !== "ADMIN") {
     return (
       <div className="min-h-screen bg-gray-50 p-10 font-sans flex flex-col items-center justify-center">
         <h1 className="text-3xl font-bold text-red-600 mb-4">Acceso Denegado</h1>
@@ -120,7 +120,7 @@ export default function ReportsPage() {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
                 <YAxis />
-                <Tooltip formatter={(value: number) => `$${value.toLocaleString('es-CO')}`} />
+                <Tooltip formatter={(value: any) => `$${Number(value || 0).toLocaleString('es-CO')}`} />
                 <Bar dataKey="valor" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>

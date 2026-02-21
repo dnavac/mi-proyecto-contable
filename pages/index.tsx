@@ -20,9 +20,6 @@ export default function Home() {
         <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl mb-4">
           Sistema Contable
         </h1>
-        <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-          Plataforma centralizada para la gestión financiera.
-        </p>
       </div>
 
       {!session ? (
@@ -47,7 +44,7 @@ export default function Home() {
             <div className="text-center">
               <h2 className="text-2xl font-bold text-slate-800">¡Hola, {session.user.name}! 👋</h2>
               <p className="text-slate-500 mt-1">
-                Tu nivel de acceso es: <span className="font-bold text-slate-700 bg-slate-100 px-2 py-1 rounded-md text-xs">{session.user.role}</span>
+                Tu nivel de acceso es: <span className="font-bold text-slate-700 bg-slate-100 px-2 py-1 rounded-md text-xs">{(session.user as { role?: string }).role || "USER"}</span>
               </p>
             </div>
           </div>
@@ -69,7 +66,7 @@ export default function Home() {
             </Link>
 
             {/* Módulo GESTION DE USUARIO (SOLO PARA ADMIN) */}
-            {session.user.role === "ADMIN" && (
+            {(session.user as { role?: string }).role === "ADMIN" && (
               <Link href="/users" className="block group">
                 <Card className="h-full transition-all hover:shadow-md hover:border-slate-400 cursor-pointer">
                   <CardHeader>
@@ -82,7 +79,7 @@ export default function Home() {
             )}
 
             {/*Módulo de DASHBOARD (SOLO PARA ADMIN) */}
-            {session.user.role === "ADMIN" && (
+            {(session.user as { role?: string }).role === "ADMIN" && (
               <Link href="/reports" className="block group">
                 <Card className="h-full transition-all hover:shadow-md hover:border-slate-400 cursor-pointer">
                   <CardHeader>
