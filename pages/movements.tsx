@@ -86,6 +86,16 @@ export default function MovementsPage() {
 
   return (
     <div className="font-sans">
+
+      {/* Botón de Volver */}
+      <div className="mb-4">
+        <Link 
+          href="/" 
+          className="flex items-center gap-2 w-fit px-3 py-2 text-sm font-medium text-slate-600 rounded-md hover:bg-slate-100 hover:text-slate-900 transition-all"
+        >
+          ← Volver al menú
+        </Link>
+      </div>
       
       {/* Encabezado con Título y Botón "Nuevo" */}
       <div className="flex justify-between items-center mb-6">

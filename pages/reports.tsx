@@ -77,6 +77,17 @@ export default function ReportsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 p-8 font-sans">
+
+      {/* Botón de Volver */}
+      <div className="mb-4">
+        <Link 
+          href="/" 
+          className="flex items-center gap-2 w-fit px-3 py-2 text-sm font-medium text-slate-600 rounded-md hover:bg-slate-100 hover:text-slate-900 transition-all"
+        >
+          ← Volver al menú
+        </Link>
+      </div>
+
       <div className="max-w-4xl mx-auto">
         
         {/* Encabezado */}
@@ -121,7 +132,7 @@ export default function ReportsPage() {
                 <XAxis dataKey="name" />
                 <YAxis />
                 <Tooltip formatter={(value: any) => `$${Number(value || 0).toLocaleString('es-CO')}`} />
-                <Bar dataKey="valor" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="valor" radius={[8, 8, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
