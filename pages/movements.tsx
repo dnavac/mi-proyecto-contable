@@ -19,12 +19,17 @@ export default function MovementsPage() {
   const { data: session } = authClient.useSession(); // ¿Quién está conectado?
   const [movements, setMovements] = useState<Movement[]>([]); // Lista de movimientos
   const [loading, setLoading] = useState(true);
+
+  const [isFormOpen, setIsFormOpen] = useState(false);
+
+  const today = new Date().toISOString().split("T")[0]; // Fecha actual en formato YYYY-MM-DD
   
   // Estado para el formulario
   const [formData, setFormData] = useState({
     concept: "",
     amount: "",
     type: "INCOME",
+    date: today,
   });
 
   //Cargar los movimientos al entrar a la página
@@ -59,12 +64,14 @@ export default function MovementsPage() {
             concept: formData.concept,
             type: formData.type,
             amount: cleanAmount, // Enviamos el monto limpio sin puntos
+            date: formData.date,
          }),
       });
 
       if (res.ok) {
-        setFormData({ concept: "", amount: "", type: "INCOME" }); // Limpiar form
+        setFormData({ concept: "", amount: "", type: "INCOME", date: today }); // Limpiar formulario
         fetchMovements(); //Recargar tabla
+        setIsFormOpen(false);
         toast.success("Movimiento guardado con éxito");
       } else {
         const error = await res.json();
@@ -75,131 +82,146 @@ export default function MovementsPage() {
     }
   };
 
-  if (loading) return <div className="p-10">Cargando movimientos...</div>;
+  if (loading) return <div className="text-slate-500 font-medium text-lg flex justify-center py-12">Cargando movimientos...</div>;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8 font-sans">
-      <div className="max-w-4xl mx-auto">
-        {/* Encabezado y Navegación */}
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">💰 Ingresos y Egresos</h1>
-          <Link href="/" className="text-blue-600 hover:underline">
-            ← Volver al Inicio
-          </Link>
-        </div>
-
-        {/* Formulario (SOLO VISIBLE PARA ADMIN) */}
-        {session?.user.role === "ADMIN" ? (
-          <div className="bg-white p-6 rounded-lg shadow-md mb-8 border border-gray-200">
-            <h2 className="text-xl font-semibold mb-4 text-gray-700">Nuevo Movimiento</h2>
-            <form onSubmit={handleSubmit} className="flex flex-wrap gap-4 items-end">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Concepto</label>
-                <input
-                  type="text"
-                  placeholder="Ej. Venta de software"
-                  className="mt-1 block w-full border border-gray-300 rounded-md p-2 text-gray-900"
-                  value={formData.concept}
-                  onChange={(e) => setFormData({ ...formData, concept: e.target.value })}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Monto</label>
-                <input
-                  type="text"
-                  placeholder="0.00"
-                  className="mt-1 block w-full border border-gray-300 rounded-md p-2 text-gray-900"
-                  value={formData.amount}
-                  onChange={(e) => {
-                    const val = e.target.value.replace(/[^0-9]/g, "");
-                    setFormData({ ...formData, amount: val });
-                  }}
-                  onBlur={() => {
-                    // CUANDO TE SALES (BLUR): Formateamos con puntos (10000 -> 10.000)
-                    if (formData.amount) {
-                      const val = Number(formData.amount.replace(/\./g, ""));
-                      setFormData({
-                        ...formData,
-                        amount: val.toLocaleString("es-CO"),
-                      });
-                    }
-                  }}
-                  onFocus={() => {
-                    // CUANDO ENTRAS (FOCUS): Quitamos los puntos para editar fácil (10.000 -> 10000)
-                    if (formData.amount) {
-                      const val = formData.amount.replace(/\./g, "");
-                      setFormData({ ...formData, amount: val });
-                    }
-                    }} 
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Tipo</label>
-                <select
-                  className="mt-1 block w-full border border-gray-300 rounded-md p-2 bg-white text-gray-900"
-                  value={formData.type}
-                  onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                >
-                  <option value="INCOME">Ingreso (+)</option>
-                  <option value="EXPENSE">Egreso (-)</option>
-                </select>
-              </div>
-              <button
-                type="submit"
-                className="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition h-10"
-              >
-                Guardar
-              </button>
-            </form>
-          </div>
-        ) : (
-          <div className="mb-8 p-4 bg-yellow-100 text-yellow-800 rounded">
-            👀 Solo puedes ver los movimientos. Para agregar, necesitas ser Administrador.
-          </div>
+    <div className="font-sans">
+      
+      {/* Encabezado con Título y Botón "Nuevo" */}
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-slate-800">💰 Ingresos y Egresos</h1>
+        
+        {/* El botón solo aparece si es ADMIN y el formulario NO está abierto */}
+        {session?.user.role === "ADMIN" && !isFormOpen && (
+          <Button onClick={() => setIsFormOpen(true)} className="bg-slate-900 hover:bg-slate-800">
+            + Nuevo Movimiento
+          </Button>
         )}
+      </div>
 
-        {/* Tabla de Resultados */}
-        <div className="bg-white rounded-lg shadow overflow-hidden border border-gray-300">
-          <table className="min-w-full divide-y divide-gray-300">
-            <thead className="bg-gray-200">
+      {/* Formulario Desplegable (Solo visible si isFormOpen es true) */}
+      {session?.user.role === "ADMIN" && isFormOpen && (
+        <div className="bg-white p-6 rounded-xl shadow-sm mb-8 border border-slate-200 animate-in fade-in slide-in-from-top-4 duration-300">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-semibold text-slate-800">Registrar Operación</h2>
+            <button onClick={() => setIsFormOpen(false)} className="text-slate-400 hover:text-slate-600 font-bold">
+              ✕
+            </button>
+          </div>
+          
+          <form onSubmit={handleSubmit} className="flex flex-wrap gap-4 items-end">
+            <div className="flex-1 min-w-[200px]">
+              <label className="block text-sm font-medium text-slate-700 mb-1">Concepto</label>
+              <Input
+                type="text"
+                placeholder="Ej. Pago de servicios"
+                value={formData.concept}
+                onChange={(e) => setFormData({ ...formData, concept: e.target.value })}
+              />
+            </div>
+            
+            <div className="flex-1 min-w-[150px]">
+              <label className="block text-sm font-medium text-slate-700 mb-1">Monto</label>
+              <Input
+                type="text"
+                placeholder="0.00"
+                value={formData.amount}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/[^0-9]/g, "");
+                  setFormData({ ...formData, amount: val });
+                }}
+                onBlur={() => {
+                  if (formData.amount) {
+                    const val = Number(formData.amount.replace(/\./g, ""));
+                    setFormData({ ...formData, amount: val.toLocaleString("es-CO") });
+                  }
+                }}
+                onFocus={() => {
+                  if (formData.amount) {
+                    const val = formData.amount.replace(/\./g, "");
+                    setFormData({ ...formData, amount: val });
+                  }
+                }} 
+              />
+            </div>
+
+            <div className="flex-1 min-w-[140px]">
+              <label className="block text-sm font-medium text-slate-700 mb-1">Fecha</label>
+              <Input
+                type="date"
+                value={formData.date || ""}
+                onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+              />
+            </div>
+            {/* ----------------------------- */}
+
+            <div className="flex-1 min-w-[140px]">
+              <label className="block text-sm font-medium text-slate-700 mb-1">Tipo</label>
+              <select
+                className="flex h-10 w-full items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
+                value={formData.type}
+                onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+              >
+                <option value="INCOME">Ingreso (+)</option>
+                <option value="EXPENSE">Egreso (-)</option>
+              </select>
+            </div>
+            
+            <div className="flex gap-2 w-full sm:w-auto mt-2 sm:mt-0">
+              <Button type="submit" className="h-10 bg-slate-900 hover:bg-slate-800 text-white">
+                Guardar
+              </Button>
+              <Button type="button" variant="outline" onClick={() => setIsFormOpen(false)} className="h-10 bg-slate-900 hover:bg-slate-800 text-white">
+                Cancelar
+              </Button>
+            </div>
+          </form>
+        </div>
+      )}
+      <div className="bg-white rounded-xl shadow-sm overflow-hidden border border-slate-200">
+        <table className="min-w-full divide-y divide-slate-200">
+          <thead className="bg-slate-50">
+            <tr>
+              <th className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Concepto</th>
+              <th className="px-6 py-4 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">Monto</th>
+              <th className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Fecha</th>
+              <th className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Usuario</th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-slate-100">
+            {movements.length === 0 ? (
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider">Fecha</th>
-                <th className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider">Concepto</th>
-                <th className="px-6 py-3 text-left text-xs font-bold text-gray-800 uppercase tracking-wider">Usuario</th>
-                <th className="px-6 py-3 text-right text-xs font-bold text-gray-800 uppercase tracking-wider">Monto</th>
+                <td colSpan={4} className="px-6 py-10 text-center text-slate-500 font-medium">
+                  No hay movimientos registrados aún.
+                </td>
               </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {movements.length === 0 ? (
-                <tr>
-                  <td colSpan={4} className="px-6 py-6 text-center text-gray-700 font-medium text-lg">
-                    No hay movimientos registrados aún.
+            ) : (
+              movements.map((mov) => (
+                <tr key={mov.id} className="hover:bg-slate-50 transition-colors">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-slate-800">
+                    {mov.concept}
+                  </td>
+                  <td className={`px-6 py-4 whitespace-nowrap text-sm text-right font-black ${
+                    mov.type === "INCOME" ? "text-emerald-600" : "text-rose-600"
+                  }`}>
+                    {mov.type === "INCOME" ? "+" : "-"} ${mov.amount.toLocaleString('es-CO')}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-500">
+                    {new Date(mov.date).toLocaleDateString()}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-600 flex items-center gap-2">
+                    <div className="h-6 w-6 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold text-slate-600">
+                      {mov.user?.name ? mov.user.name.charAt(0).toUpperCase() : "?"}
+                    </div>
+                    {mov.user?.name || "Desconocido"}
                   </td>
                 </tr>
-              ) : (
-                movements.map((mov) => (
-                  <tr key={mov.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-700">
-                      {new Date(mov.date).toLocaleDateString()}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">
-                      {mov.concept}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-700">
-                      {mov.user?.name || "Desconocido"}
-                    </td>
-                    <td className={`px-6 py-4 whitespace-nowrap text-sm text-right font-black ${
-                      mov.type === "INCOME" ? "text-green-700" : "text-red-700"
-                    }`}>
-                      {mov.type === "INCOME" ? "+" : "-"} ${mov.amount.toLocaleString('es-CO')}
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+              ))
+            )}
+          </tbody>
+        </table>
       </div>
+      
     </div>
   );
 }
