@@ -34,9 +34,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 {/* Menú de Usuario Desplegable */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="relative h-10 w-10 rounded-full border border-slate-200 hover:bg-slate-100 p-0">
+                    {/* Agrego cursor-pointer a las clases del Button*/}
+                    <Button variant="ghost" className="relative h-10 w-10 rounded-full border border-slate-200 hover:bg-slate-100 p-0 cursor-pointer">
                       <Avatar className="h-9 w-9">
-                        {/* Intentamos cargar la foto de GitHub, si falla ponemos la primera letra de su nombre */}
                         <AvatarImage src={session.user.image || ""} alt={session.user.name} />
                         <AvatarFallback className="bg-slate-800 text-white font-bold">
                           {session.user.name?.charAt(0).toUpperCase() || "U"}
