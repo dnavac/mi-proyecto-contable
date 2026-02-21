@@ -44,7 +44,7 @@ export default function Home() {
             <div className="text-center">
               <h2 className="text-2xl font-bold text-slate-800">¡Hola, {session.user.name}! 👋</h2>
               <p className="text-slate-500 mt-1">
-                Tu nivel de acceso es: <span className="font-bold text-slate-700 bg-slate-100 px-2 py-1 rounded-md text-xs">{session.user.role}</span>
+                Tu nivel de acceso es: <span className="font-bold text-slate-700 bg-slate-100 px-2 py-1 rounded-md text-xs">{(session.user as { role?: string }).role || "USER"}</span>
               </p>
             </div>
           </div>
