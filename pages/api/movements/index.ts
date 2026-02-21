@@ -55,9 +55,15 @@ import { date } from "better-auth";
  */
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  //Verificar que el usuario haya iniciado sesión
-  const session = await auth.api.getSession({ headers: req.headers as HeadersInit});
-  console.log("Sesión actual:", session);
+  // Transformando Node Headers a Web Headers de forma segura
+  const webHeaders = new Headers();
+  Object.entries(req.headers).forEach(([key, value]) => {
+    if (typeof value === "string") webHeaders.set(key, value);
+    else if (Array.isArray(value)) value.forEach((v) => webHeaders.append(key, v));
+  });
+
+  // Verificar sesión
+  const session = await auth.api.getSession({ headers: webHeaders });
   
   if (!session) {
     return res.status(401).json({ error: "No autorizado. Debes iniciar sesión." });
@@ -79,7 +85,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // Crear un nuevo movimiento
   if (req.method === "POST") {
     //Se valida que solo los ADMIN pueden crear movimientos
-    if (session.user.role !== "ADMIN") {
+    if ((session.user as { role?: string }).role !== "ADMIN") {
       return res.status(403).json({ error: "Acceso denegado. Solo los administradores pueden crear movimientos." });
     }
 

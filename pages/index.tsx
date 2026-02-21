@@ -66,7 +66,7 @@ export default function Home() {
             </Link>
 
             {/* Módulo GESTION DE USUARIO (SOLO PARA ADMIN) */}
-            {session.user.role === "ADMIN" && (
+            {(session.user as { role?: string }).role === "ADMIN" && (
               <Link href="/users" className="block group">
                 <Card className="h-full transition-all hover:shadow-md hover:border-slate-400 cursor-pointer">
                   <CardHeader>
@@ -79,7 +79,7 @@ export default function Home() {
             )}
 
             {/*Módulo de DASHBOARD (SOLO PARA ADMIN) */}
-            {session.user.role === "ADMIN" && (
+            {(session.user as { role?: string }).role === "ADMIN" && (
               <Link href="/reports" className="block group">
                 <Card className="h-full transition-all hover:shadow-md hover:border-slate-400 cursor-pointer">
                   <CardHeader>

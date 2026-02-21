@@ -22,7 +22,7 @@ export default function UsersPage() {
   const [newName, setNewName] = useState<string>("");  // estado para el nombre editable
 
   useEffect(() => {
-    if (session?.user.role === "ADMIN") {
+    if ((session?.user as { role?: string })?.role === "ADMIN") {
       fetchUsers();
     }
   }, [session]);
@@ -60,7 +60,7 @@ export default function UsersPage() {
 
   if (isPending || loading) return <div className="p-10 font-sans text-lg text-slate-500 flex justify-center">Cargando usuarios...</div>;
 
-  if (session?.user.role !== "ADMIN") {
+  if ((session?.user as { role?: string })?.role !== "ADMIN") {
     return (
       <div className="p-10 font-sans flex flex-col items-center justify-center text-center">
         <h1 className="text-3xl font-bold text-rose-600 mb-4">Acceso Denegado</h1>
@@ -167,14 +167,14 @@ export default function UsersPage() {
                         setNewRole(u.role); 
                         setNewName(u.name || ""); // Cargamos el nombre actual al abrir la edición
                       }}
-                      disabled={session.user.id === u.id}
+                      disabled={session?.user?.id === u.id}
                       className={`h-8 px-2 text-xs font-semibold transition-all ${
-                        session.user.id === u.id 
+                        session?.user?.id === u.id
                           ? "text-slate-400 bg-transparent" 
                           : "text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                       }`}
                     >
-                      {session.user.id === u.id ? "Tu Cuenta" : "✏️ Editar"}
+                      {session?.user?.id === u.id ? "Tu Cuenta" : "✏️ Editar"}
                     </Button>
                   )}
                 </td>

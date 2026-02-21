@@ -50,9 +50,16 @@ import { auth } from "../../lib/auth";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   //Verificar sesión,que el usuario sea ADMIN
-  const session = await auth.api.getSession({ headers: req.headers as HeadersInit});
+  const webHeaders = new Headers();
+  Object.entries(req.headers).forEach(([key, value]) => {
+    if (typeof value === "string") webHeaders.set(key, value);
+    else if (Array.isArray(value)) value.forEach((v) => webHeaders.append(key, v));
+  });
+
+  // 2. Verificar sesión y rol
+  const session = await auth.api.getSession({ headers: webHeaders });
   
-  if (!session || session.user.role !== "ADMIN") {
+  if (!session || (session.user as { role?: string }).role !== "ADMIN") {
     return res.status(403).json({ error: "Acceso denegado. Solo administradores pueden ver esto." });
   }
   //Listar usuarios
