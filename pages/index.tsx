@@ -20,9 +20,6 @@ export default function Home() {
         <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl mb-4">
           Sistema Contable
         </h1>
-        <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-          Plataforma centralizada para la gestión financiera.
-        </p>
       </div>
 
       {!session ? (
