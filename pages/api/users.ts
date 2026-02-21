@@ -1,6 +1,52 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../lib/prisma";
 import { auth } from "../../lib/auth";
+/**
+ * @swagger
+ * /api/users:
+ *   get:
+ *     summary: Listar usuarios
+ *     description: Retorna la lista de todos los usuarios registrados en el sistema. Solo accesible para ADMIN.
+ *     tags:
+ *       - Usuarios
+ *     responses:
+ *       200:
+ *         description: Lista de usuarios obtenida exitosamente.
+ *       403:
+ *         description: Acceso denegado. No eres Administrador.
+ *       500:
+ *         description: Error al obtener usuarios.
+ *   put:
+ *     summary: Actualizar usuario
+ *     description: Modifica el rol y el nombre de un usuario específico. Solo accesible para ADMIN.
+ *     tags:
+ *       - Usuarios
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userId:
+ *                 type: string
+ *                 example: "clk123abc..."
+ *               newRole:
+ *                 type: string
+ *                 example: "ADMIN"
+ *               newName:
+ *                 type: string
+ *                 example: "Carlos Pérez"
+ *     responses:
+ *       200:
+ *         description: Usuario actualizado correctamente.
+ *       400:
+ *         description: Faltan datos obligatorios.
+ *       403:
+ *         description: Acceso denegado. No eres Administrador.
+ *       500:
+ *         description: Error al actualizar el usuario.
+ */
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   //Verificar sesión,que el usuario sea ADMIN

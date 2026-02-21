@@ -3,6 +3,57 @@ import { prisma } from "../../../lib/prisma";
 import { auth } from "../../../lib/auth";
 import { date } from "better-auth";
 
+/**
+ * @swagger
+ * /api/movements:
+ *   get:
+ *     summary: Obtener todos los movimientos
+ *     description: Retorna la lista de ingresos y egresos ordenados de más reciente a más antiguo. Requiere haber iniciado sesión.
+ *     tags:
+ *       - Movimientos
+ *     responses:
+ *       200:
+ *         description: Lista de movimientos obtenida exitosamente.
+ *       401:
+ *         description: No autorizado. Debes iniciar sesión.
+ *       500:
+ *         description: Error al obtener los movimientos.
+ *   post:
+ *     summary: Crear un nuevo movimiento
+ *     description: Registra un nuevo ingreso o egreso en la base de datos. Solo accesible para administradores (ADMIN).
+ *     tags:
+ *       - Movimientos
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               concept:
+ *                 type: string
+ *                 example: "Pago de servicios"
+ *               amount:
+ *                 type: number
+ *                 example: 150000
+ *               type:
+ *                 type: string
+ *                 example: "EXPENSE"
+ *               date:
+ *                 type: string
+ *                 format: date
+ *                 example: "2026-02-20"
+ *     responses:
+ *       201:
+ *         description: Movimiento creado exitosamente.
+ *       400:
+ *         description: Faltan datos obligatorios o el monto es inválido.
+ *       403:
+ *         description: Acceso denegado. Solo administradores.
+ *       500:
+ *         description: Error al crear el movimiento.
+ */
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   //Verificar que el usuario haya iniciado sesión
   const session = await auth.api.getSession({ headers: req.headers });
